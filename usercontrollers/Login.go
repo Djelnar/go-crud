@@ -21,7 +21,11 @@ func Login(Client *redis.Client) func(c *gin.Context) {
 
 		err := c.ShouldBindJSON(&json)
 
-		if err == nil {
+		if err != nil {
+			c.JSON(400, gin.H{
+				`error`: `u dun goofed`,
+			})
+		} else {
 			usernameExist := Client.Cmd(`GET`, string(json.Username))
 			uStr, _ := usernameExist.Str()
 			log.Println(uStr)
@@ -38,10 +42,6 @@ func Login(Client *redis.Client) func(c *gin.Context) {
 					`token`: token,
 				})
 			}
-		} else {
-			c.JSON(400, gin.H{
-				`error`: `u dun goofed`,
-			})
 		}
 	}
 }

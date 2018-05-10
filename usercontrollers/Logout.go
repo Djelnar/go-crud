@@ -18,7 +18,11 @@ func Logout(Client *redis.Client) func(c *gin.Context) {
 		json := tlogout{}
 		err := c.ShouldBindJSON(&json)
 
-		if err == nil {
+		if err != nil {
+			c.JSON(400, gin.H{
+				`error`: `u dun goofed`,
+			})
+		} else {
 			tokenExists := Client.Cmd(`SREM`, json.Username+`_tokens`, json.Token)
 			v, e := tokenExists.Int64()
 			fmt.Println(v, e)
@@ -31,10 +35,6 @@ func Logout(Client *redis.Client) func(c *gin.Context) {
 					`message`: v,
 				})
 			}
-		} else {
-			c.JSON(400, gin.H{
-				`error`: `u dun goofed`,
-			})
 		}
 	}
 }

@@ -17,22 +17,22 @@ func RegisterClient(Client *redis.Client) func(c *gin.Context) {
 
 		err := c.ShouldBindJSON(&json)
 
-		if err == nil {
-			usernameExist := Client.Cmd(`GET`, string(json.Username))
-			uStr, _ := usernameExist.Str()
-			if len(uStr) == 0 {
-				Client.Cmd(`SET`, string(json.Username), string(json.Password))
-				Client.Cmd(`SADD`, string(json.Username)+`_roles`, `user`)
-				c.JSON(200, `OK`)
-			} else {
-				c.JSON(400, gin.H{
-					`error`: `username ` + json.Username + ` already taken`,
-				})
-			}
-		} else {
+		if err != nil {
 			c.JSON(400, gin.H{
 				`error`: `u dun goofed`,
 			})
+		} else {
+			usernameExist := Client.Cmd(`GET`, string(json.Username))
+			uStr, _ := usernameExist.Str()
+			if len(uStr) != 0 {
+				c.JSON(400, gin.H{
+					`error`: `username ` + json.Username + ` already taken`,
+				})
+			} else {
+				Client.Cmd(`SET`, string(json.Username), string(json.Password))
+				Client.Cmd(`SADD`, string(json.Username)+`_roles`, `user`)
+				c.JSON(200, `OK`)
+			}
 		}
 
 	}
