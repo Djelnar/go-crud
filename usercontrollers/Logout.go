@@ -1,8 +1,6 @@
 package usercontrollers
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/mediocregopher/radix.v2/redis"
 )
@@ -25,7 +23,6 @@ func Logout(Client *redis.Client) func(c *gin.Context) {
 		} else {
 			tokenExists := Client.Cmd(`SREM`, json.Username+`_tokens`, json.Token)
 			v, e := tokenExists.Int64()
-			fmt.Println(v, e)
 			if e != nil || v == 0 {
 				c.JSON(403, gin.H{
 					`error`: `u dun goofed`,
