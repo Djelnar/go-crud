@@ -8,7 +8,6 @@ import (
 )
 
 type tregisterA struct {
-	Name     string `json:"name" binding:"required,alpha,min=2,max=30"`
 	Username string `json:"username" binding:"required,alphanum,min=2,max=30"`
 	Password string `json:"password" binding:"required,min=8,max=64"`
 	Secret   string `json:"secret" binding:"required"`
